@@ -82,6 +82,9 @@ def orders(shared, chat, message, args):
     start = datetime.combine(start.date(), start.min.time()) + timedelta(hours=3)
     end = start + timedelta(days=1)
     for i, order in enumerate(Order.select().where(
+        chat.send(str(order.user_id))
+        chat.send(str(order.user.id))
+        chat.send(str(user.id))
         Order.user.id == user.id and Order.ordered_at > start and Order.ordered_at < end)
         ):
         message.append(f'{i + 1} - {order.item.name} - {order.ordered_at.time()}')
