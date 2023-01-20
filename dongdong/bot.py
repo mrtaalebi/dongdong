@@ -112,7 +112,7 @@ def item_command(chat, message, args):
 
 
 @bot.message_matches(r".*")
-def input_matcher(chat, message, args):
+def input_matcher(chat, message, args=None):
     if chat.id in state:
         return state[chat.id](chat, message, args)
     else:
