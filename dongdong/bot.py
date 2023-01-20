@@ -4,6 +4,7 @@ import pytz
 import os
 
 import botogram
+import peewee
 import sqlite3
 
 import config
@@ -150,10 +151,10 @@ def enter_item_price(shared, chat, message):
         shared["state"].pop(chat.id)
         shared["state"] = state
     try:
-        Item.create(name=name, price=float(message))
+        Item.create(name=name, price=float(message.text))
         chat.send(item_created_message)
     except peewee.IntegrityError as e:
-        Item.select().where(name=name).update(price=float(message))
+        Item.select().where(name=name).update(price=float(message.text))
         chat.send(item_updated_message)
 
 
