@@ -75,6 +75,23 @@ def order_is_incorrect_callback(shared, query, data, chat, message):
     chat.send(config.order_canceled_message)
 
 
+@bot.command("pay")
+def pay(shared, chat, message, args):
+    start = config.time_now()
+    if start.hour < 3:
+        start -= timedelta(days=1)
+    start = datetime.combine(start.date(), start.min.time()) + timedelta(hours=3)
+    end = start + timedelta(days=1)
+    creditor = User.get(user_id=chat.id)
+    payment = Payment(creditor=creditor)
+    debts, total = [], 0
+    for order in Order.select().where(Order.ordered_at > start and Order.ordered_at < end):
+        debts.append(debitor=order.user, order=order, payment=payment)
+        total += order.item.price
+    Debt.insert_many(debts).execute()
+    chat.send(config.pay_message.format(total))
+
+
 @bot.command("settle")
 def settle(shared, chat, message, args):
     """
