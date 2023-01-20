@@ -70,7 +70,7 @@ def settle(chat, message, args):
         [
             sum([
                 debt.order.item.price for debt in
-                Debt.where(debitor == user and payment.creditor == creditor)])
+                Debt.select().where(debitor == user and payment.creditor == creditor)])
                 for creditor in User.select()
         ]
         for debitor in User.select()
@@ -96,7 +96,7 @@ def settle(chat, message, args):
 
     user = User.get(user_id=chat.id)
     menu = botogram.Buttons()
-    for i, sd in enumerate(SimpleDebt.where(debitor == user)):
+    for i, sd in enumerate(SimpleDebt.select().where(debitor == user)):
         menu[i].callback(f'{sd.creditor.name}', 'deliver', sd.id)
     message = '\n'.join([f'{sd.debitor.name} pays {sd.creditor.name}, {sd.amount}' for sd in SimpleDebt.select()])
     chat.send(message, attach=menu())
@@ -118,7 +118,7 @@ def item_command(chat, message, args):
     state[chat.id] = enter_item_name
 
 
-@bot.message_matches(".*")
+@bot.message_matches(r".*")
 def input_matcher(chat, message, args):
     if chat.id in state:
         return state[chat.id](chat, message, args)
@@ -138,7 +138,7 @@ def enter_item_price(chat, message, args):
         Item.create(name=name, price=float(message))
         chat.send(item_created_message)
     except peewee.IntegrityError as e:
-        Item.where(name=name).update(price=float(message))
+        Item.select().where(name=name).update(price=float(message))
         chat.send(item_updated_message)
     state.pop(chat.id)
 
