@@ -22,14 +22,20 @@ help_message = '''
 /menu
 منوی کافه رو برات میاره.
 
+/order
+سفارشای اون روزتو برات می‌آره.
+
 /pay
 برا وقتیه که می‌خوای هزینه اون روز رو تو حساب کنی. حتما هر روز یه نفر این رو بزنه.
 
 /settle
 حداقل تعداد کارت به کارت مورد نیاز رو پیدا می‌کنه و بهت می‌گه. هرچندوقت یه بار که خواستی اینو بزن و بدهی‌هات رو صاف کن.
 
-/item
+/put_item
 که باهاش آیتم‌های منوی کافه رو اضافه می‌کنی یا تغییر می‌دی
+
+/delete_item
+لیست آیتما رو می‌ده که اگه یکیش اشتباس پاکش کنی.
 
 جاییشم سوراخ بود بهم بگید.
 '''
@@ -37,12 +43,17 @@ enter_item_name_message = 'می‌تونی یه چیز اضافه کنی یا ق
 enter_item_price_message = 'چنده؟'
 item_created_message = 'أیتم اضافه شد.'
 item_updated_message = 'أیتم آپدیت شد.'
+item_deleted_message = 'آیتم حذف شد.'
+delete_item_message = 'حذف {}'
+delete_item_confirm_message = 'دادیم رفت.'
 message_not_matched_message = 'نفهیدم، چی؟'
 menu_message = 'چی میل داری؟'
 order_message = '{} درسته؟'
-order_is_correct_message = 'آره'
-order_is_incorrect_message = 'نه'
-order_confirmed_message = 'ناب'
-order_canceled_message = 'ردیفه ثبت نشد.'
+order_is_correct_message = 'آره.'
+order_is_incorrect_message = 'نه.'
+order_confirmed_message = 'ناب.'
+order_canceled_message = 'باشه.'
+order_remove_message = 'حذف {}'
+order_remove_confirmation = 'ردیفه خط خورد.'
 pay_message = 'درود {} تومن از جیبت رفت.'
 settle_message = 'اینجوریاس:'

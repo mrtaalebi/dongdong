@@ -79,6 +79,30 @@ def order_is_incorrect_callback(shared, query, data, chat, message):
     chat.send(config.order_canceled_message)
 
 
+@bot.command("orders")
+def orders(shared, chat, message, args):
+    message = []
+    menu = botogram.Buttons()
+    user = User.get(user_id=chat.id)
+    start = config.time_now()
+    if start.hour < 3:
+        start -= timedelta(days=1)
+    start = datetime.combine(start.date(), start.min.time()) + timedelta(hours=3)
+    end = start + timedelta(days=1)
+    for i, order in enumerate(Order.select().where(
+        Order.user == user and Order.ordered_at > start and Order.ordered_at < end)
+        ):
+        message.append(f'{i} - {order.item.name} - {order.ordered_at.time()}')
+        menu[int(i / 3)].callback(config.order_remove_message.format(i), 'remove_order', str(order.id))
+    chat.send('\n'.join(message), attach=menu)
+
+
+@bot.callback("remove_order")
+def remove_order_callback(shared, query, data, chat, message):
+    Order.delete().where(id=int(data))
+    chat.send(config.order_remove_confirmation)
+
+
 @bot.command("pay")
 def pay(shared, chat, message, args):
     start = config.time_now()
@@ -144,13 +168,29 @@ def deliver_callback(shared, query, data, chat, message):
     chat.send(f'{creditor.name} \n {simple_debt.amount}')
 
 
-@bot.command("item")
+@bot.command("put_item")
 def item_command(shared, chat, message, args):
     with shared.lock("state"):
         state = shared["state"]
         state[chat.id] = enter_item_name
         shared["state"] = state
     chat.send(config.enter_item_name_message)
+
+
+@bot.command("delete_item")
+def delete_item_command(shared, chat, message, args):
+    message = []
+    menu = botogram.Buttons()
+    for i, item in enumerate(Item.select()):
+        message.append(f'{i} - {item.name} - {item.price}')
+        menu[int(i % 3)].callback(delete_item_message.format(i), 'delete_item_callback', str(item.id))
+    chat.send('\n'.join(message), attach=menu)
+    
+
+@bot.callback("delete_item_callback")
+def delete_item_callback(shared, query, data, chat, message):
+    Item.delete(id=int(data))
+    chat.send(config.delete_item_confirm_message)
 
 
 @bot.message_matches(r".*")
