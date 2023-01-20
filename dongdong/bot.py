@@ -60,7 +60,6 @@ def order_is_incorrect_callback(query, data, chat, message):
     chat.send(config.order_canceled_message)
 
 
-
 @bot.command("settle")
 def settle(chat, message, args):
     """
