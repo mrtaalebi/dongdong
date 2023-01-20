@@ -37,7 +37,7 @@ def help_command(shared, chat, message, args):
 def menu_command(shared, chat, message, args):
     menu = botogram.Buttons()
     for i, item in enumerate(Item.select()):
-        menu[int(i / 2)].callback(item.name, 'order', int(item.id))
+        menu[int(i / 2)].callback(item.name, 'order', str(item.id))
     chat.send(config.menu_message, attach=menu)
 
 
@@ -49,8 +49,8 @@ def order_callback(shared, query, data, chat, message):
         shared["cache"] = cache
     item = Item.get(id=int(data))
     menu = botogram.Buttons()
-    menu[0].callback(order_is_correct, 'order_is_correct', int(item.id))
-    menu[0].callback(order_is_incorrect, 'order_is_incorrect', int(item.id))
+    menu[0].callback(order_is_correct, 'order_is_correct', str(item.id))
+    menu[0].callback(order_is_incorrect, 'order_is_incorrect', str(item.id))
     chat.send(config.order_message.format(item.name), attach=menu)
 
 
@@ -105,7 +105,7 @@ def settle(shared, chat, message, args):
     user = User.get(user_id=chat.id)
     menu = botogram.Buttons()
     for i, sd in enumerate(SimpleDebt.select().where(SimpleDebt.debitor == user)):
-        menu[i].callback(f'{sd.creditor.name}', 'deliver', int(sd.id))
+        menu[i].callback(f'{sd.creditor.name}', 'deliver', str(sd.id))
     message = config.settle_message + '\n'.join([f'{sd.debitor.name} pays {sd.creditor.name}, {sd.amount}' for sd in SimpleDebt.select()])
     chat.send(message, attach=menu)
 
