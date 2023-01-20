@@ -116,6 +116,7 @@ def item_command(shared, chat, message, args):
 
 @bot.message_matches(r".*")
 def input_matcher(shared, chat, message):
+    chat.send(shared["state"])
     if chat.id in shared["state"]:
         return shared["state"][chat.id](shared, chat, message)
     else:
