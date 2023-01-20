@@ -42,7 +42,10 @@ def menu_command(shared, chat, message, args):
 
 @bot.callback("order")
 def order_callback(shared, query, data, chat, message):
-    cache[chat.id] = data
+    with shared.lock("cache"):
+        cache = shared["cache"]
+        cache[chat.id] = data
+        shared["cache"] = cache
     menu = botogram.Buttons()
     menu[0].callback(order_is_correct, 'order_is_correct', item.name)
     menu[0].callback(order_is_incorrect, 'order_is_incorrect', item.name)
@@ -51,7 +54,7 @@ def order_callback(shared, query, data, chat, message):
 
 @bot.callback("order_is_correct")
 def order_is_correct_callback(shared, query, data, chat, message):
-    item = Item.get(name=cache(chat.id))
+    item = Item.get(name=shared["cache"][chat.id])
     user = User.get(user_id=chat.id)
     Order.create(user=user, item=item)
     chat.send(config.order_confirmed_message)
@@ -59,7 +62,10 @@ def order_is_correct_callback(shared, query, data, chat, message):
 
 @bot.callback("order_is_incorrect")
 def order_is_incorrect_callback(shared, query, data, chat, message):
-    cache.drop(chat.id)
+    with shared.lock("cache"):
+        cache = shared["cache"]
+        cache.drop(chat.id)
+        shared["cache"] = cache
     chat.send(config.order_canceled_message)
 
 
@@ -119,8 +125,6 @@ def item_command(shared, chat, message, args):
 
 @bot.message_matches(r".*")
 def input_matcher(shared, chat, message):
-    chat.send(str(shared["state"]))
-    chat.send(str(type(chat.id)))
     if chat.id in shared["state"]:
         return shared["state"][chat.id](shared, chat, message)
     else:
@@ -128,14 +132,23 @@ def input_matcher(shared, chat, message):
 
 
 def enter_item_name(shared, chat, message):
-    cache[chat.id] = message
-    shared["state"][chat.id] = enter_item_price
+    with shared.lock("cache"):
+        cache = shared["cache"]
+        cache[chat.id] = message
+        shared["cache"] = cache
+    with shared.lock("state"):
+        state = shared["state"]
+        state[chat.id] = enter_item_price
+        shared["state"] = state
     chat.send(config.enter_item_price_message)
 
 
 def enter_item_price(shared, chat, message):
-    name = cache[chat.id]
-    shared["state"].pop(chat.id)
+    name = shared["cache"][chat.id]
+    with shared.lock("state"):
+        state = shared["state"]
+        shared["state"].pop(chat.id)
+        shared["state"] = state
     try:
         Item.create(name=name, price=float(message))
         chat.send(item_created_message)
