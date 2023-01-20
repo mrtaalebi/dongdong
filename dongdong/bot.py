@@ -41,7 +41,7 @@ def help_command(shared, chat, message, args):
 def menu_command(shared, chat, message, args):
     menu = botogram.Buttons()
     for i, item in enumerate(Item.select()):
-        menu[int(i / 2)].callback(f'{item.name} - {item.price}, 'order', str(item.id))
+        menu[int(i / 2)].callback(f'{item.name} - {item.price}', 'order', str(item.id))
     chat.send(config.menu_message, attach=menu)
 
 
