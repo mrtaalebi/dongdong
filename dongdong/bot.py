@@ -86,7 +86,7 @@ def pay(shared, chat, message, args):
     payment = Payment(creditor=creditor)
     debts, total = [], 0
     for order in Order.select().where(Order.ordered_at > start and Order.ordered_at < end):
-        debts.append(debitor=order.user, order=order, payment=payment)
+        debts.append({'debitor': order.user, 'order': order, 'payment': payment})
         total += order.item.price
     Debt.insert_many(debts).execute()
     chat.send(config.pay_message.format(total))
