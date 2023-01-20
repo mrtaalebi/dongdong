@@ -6,7 +6,7 @@ RUN mkdir -p /app
 COPY . /app
 WORKDIR /app
 
-RUN apk add build-base --no-cache
-RUN make prod-deps
+RUN apk add make --no-cache
+RUN make install
 
 ENTRYPOINT ["make", "run"]

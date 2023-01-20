@@ -2,14 +2,9 @@ PROJECT := dongdong
 TAG ?= latest
 IMAGE := ${PROJECT}:${TAG}
 
-deps:
-	pip install --upgrade pip poetry
-	poetry config virtualenvs.in-project true
-	poetry install
-
-prod-deps:
-	pip install --upgrade pip poetry
-	poetry install --no-dev --no-interaction --no-ansi
+install:
+	pip install --upgrade pip 
+	pip install -r requirements.txt
 
 build:
 	docker build \
@@ -18,7 +13,7 @@ build:
 		.
 
 run:
-	poetry run python ${PROJECT}
+	python ${PROJECT}
 
 prod-run:
 	build
