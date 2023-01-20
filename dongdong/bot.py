@@ -37,7 +37,7 @@ def help_command(shared, chat, message, args):
 def menu_command(shared, chat, message, args):
     menu = botogram.Buttons()
     for i, item in enumerate(Item.select()):
-        menu[int(i / 2)].callback(item.name, 'order', item.name)
+        menu[int(i / 2)].callback(item.name, 'order', item.id)
     chat.send(config.menu_message, attach=menu)
 
 
@@ -47,15 +47,20 @@ def order_callback(shared, query, data, chat, message):
         cache = shared["cache"]
         cache[chat.id] = data
         shared["cache"] = cache
+    item = Item.get(id=int(data))
     menu = botogram.Buttons()
-    menu[0].callback(order_is_correct, 'order_is_correct', item.name)
-    menu[0].callback(order_is_incorrect, 'order_is_incorrect', item.name)
-    chat.send(config.order_message, attach=menu)
+    menu[0].callback(order_is_correct, 'order_is_correct', item.id)
+    menu[0].callback(order_is_incorrect, 'order_is_incorrect', item.id)
+    chat.send(config.order_message.format(item.name), attach=menu)
 
 
 @bot.callback("order_is_correct")
 def order_is_correct_callback(shared, query, data, chat, message):
-    item = Item.get(name=shared["cache"][chat.id])
+    with shared.lock("cache"):
+        cache = shared["cache"]
+        cache.drop(chat.id)
+        shared["cache"] = cache
+    item = Item.get(id=int(data))
     user = User.get(user_id=chat.id)
     Order.create(user=user, item=item)
     chat.send(config.order_confirmed_message)
@@ -107,7 +112,7 @@ def settle(shared, chat, message, args):
 
 @bot.callback("deliver")
 def deliver_callback(shared, query, data, chat, message):
-    simple_debt = SimpleDebt.get(id=data)
+    simple_debt = SimpleDebt.get(id=int(data))
     creditor = User.get(user_id == simple_debt.creditor.user_id)
     if creditor.card_number:
         chat.send(creditor.card_number)
@@ -135,7 +140,7 @@ def input_matcher(shared, chat, message):
 def enter_item_name(shared, chat, message):
     with shared.lock("cache"):
         cache = shared["cache"]
-        cache[chat.id] = message
+        cache[chat.id] = message.text
         shared["cache"] = cache
     with shared.lock("state"):
         state = shared["state"]
