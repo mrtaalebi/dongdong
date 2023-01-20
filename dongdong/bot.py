@@ -152,7 +152,7 @@ def enter_item_price(shared, chat, message):
         shared["state"] = state
     try:
         Item.create(name=name, price=float(message.text))
-        chat.send(item_created_message)
+        chat.send(config.item_created_message)
     except peewee.IntegrityError as e:
         Item.select().where(name=name).update(price=float(message.text))
         chat.send(item_updated_message)
