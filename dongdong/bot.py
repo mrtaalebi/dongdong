@@ -180,7 +180,7 @@ def settle(shared, chat, message, args):
 @bot.callback("deliver")
 def deliver_callback(shared, query, data, chat, message):
     simple_debt = SimpleDebt.get(SimpleDebt.id == int(data))
-    creditor = User.get(User.id == simple_debt.creditor.user_id)
+    creditor = User.get(User.user_id == simple_debt.creditor.user_id)
     if creditor.card_number:
         chat.send(creditor.card_number)
     simple_debt.delete_instance()

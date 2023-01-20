@@ -48,7 +48,7 @@ class Payment(Model):
 
 class Debt(Model):
     debitor = ForeignKeyField(User, backref='debts')
-    order = ForeignKeyField(Order, backref='debt', unique=True)
+    order = ForeignKeyField(Order, backref='debt', unique=True, on_delete='CASCADE')
     payment = ForeignKeyField(Payment, backref='debt', null=True)
     is_settled = BooleanField(default=False)
 
