@@ -7,17 +7,11 @@ install:
 	pip install -r requirements.txt
 
 build:
-	docker build \
-		--file devops/Dockerfile \
-		--tag ${IMAGE} \
-		.
+	docker build --tag ${IMAGE} .
 
 run:
 	python ${PROJECT}
 
 prod-run:
-	build
-	docker compose \
-		--file devops/docker-compose.yaml \
-		up -d
+	docker compose up -d
 
