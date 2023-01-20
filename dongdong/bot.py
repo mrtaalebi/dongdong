@@ -25,6 +25,10 @@ def prepare_memory(shared):
 @bot.command("start")
 def start_command(shared, chat, message, args):
     User.create(user_id=chat.id, name=chat.name, username=chat.username)
+    with shared.lock("state"):
+        state = shared["state"]
+        state[chat.id] = enter_card_number
+        shared["state"] = state
     chat.send(config.start_message)
 
 
@@ -178,6 +182,17 @@ def enter_item_price(shared, chat, message):
     except peewee.IntegrityError as e:
         Item.select().where(name=name).update(price=float(message.text))
         chat.send(item_updated_message)
+
+
+def enter_card_number(shared, chat, message):
+    with shared.lock("state"):
+        state = shared["state"]
+        shared["state"].pop(chat.id)
+        shared["state"] = state
+    user = User.get(user_id=chat.id)
+    user.card_number = message.text
+    user.save()
+    chat.send(config.welcome_message)
 
 
 def message_not_matched(chat, message):
