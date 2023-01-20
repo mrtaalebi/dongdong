@@ -150,6 +150,7 @@ def settle(shared, chat, message, args):
         for i in amount:
             amount[p] += debts[i][p] - debts[p][i]
 
+    chat.send(str(debts))
     chat.send(str(amount))
     simple_debts = []
     while True:
