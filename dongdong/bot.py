@@ -41,7 +41,7 @@ def help_command(shared, chat, message, args):
 def menu_command(shared, chat, message, args):
     menu = botogram.Buttons()
     for i, item in enumerate(Item.select()):
-        menu[int(i / 2)].callback(item.name, 'order', str(item.id))
+        menu[int(i / 2)].callback(f'{item.name} - {item.price}, 'order', str(item.id))
     chat.send(config.menu_message, attach=menu)
 
 
@@ -183,7 +183,7 @@ def delete_item_command(shared, chat, message, args):
     menu = botogram.Buttons()
     for i, item in enumerate(Item.select()):
         message.append(f'{i} - {item.name} - {item.price}')
-        menu[int(i % 3)].callback(delete_item_message.format(i), 'delete_item_callback', str(item.id))
+        menu[int(i % 3)].callback(config.delete_item_message.format(i), 'delete_item_callback', str(item.id))
     chat.send('\n'.join(message), attach=menu)
     
 
