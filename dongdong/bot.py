@@ -121,7 +121,7 @@ def pay_confirm_callback(shared, query, data, chat, message):
     creditor = User.get(user_id=chat.id)
     payment = Payment(creditor=creditor)
     debts, total = [], 0
-    for order in Order.select().where(Order.ordered_at > start and Order.ordered_at < end Order.debt == None):
+    for order in Order.select().where(Order.ordered_at > start and Order.ordered_at < end and Order.debt == None):
         debts.append({'debitor': order.user, 'order': order, 'payment': payment})
         total += order.item.price
     Debt.insert_many(debts).execute()
