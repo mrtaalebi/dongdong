@@ -173,7 +173,9 @@ def settle(shared, chat, message, args):
 
     user = User.get(User.user_id == chat.id)
     menu = botogram.Buttons()
-    for i, sd in enumerate(SimpleDebt.select().where(SimpleDebt.debitor.id == user.id)):
+    for i, sd in enumerate(SimpleDebt.select()):
+        if sd.debitor.id != user.id:
+            continue
         menu[i].callback(f'{sd.creditor.name}', 'deliver', str(sd.id))
     message = config.settle_message + '\n'.join([f'{sd.debitor.name} pays {sd.creditor.name}, {sd.amount}' for sd in SimpleDebt.select()])
     chat.send(message, attach=menu)
