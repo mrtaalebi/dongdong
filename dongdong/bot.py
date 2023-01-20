@@ -118,6 +118,8 @@ def pay_confirm_callback(shared, query, data, chat, message):
         start -= timedelta(days=1)
     start = datetime.combine(start.date(), start.min.time()) + timedelta(hours=3)
     end = start + timedelta(days=1)
+    chat.send(str(start))
+    chat.send(str(end))
     creditor = User.get(user_id=chat.id)
     payment = Payment(creditor=creditor)
     debts, total = [], 0
