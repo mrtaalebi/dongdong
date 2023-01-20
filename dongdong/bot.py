@@ -12,7 +12,7 @@ from models import db, User, Item, Order, Debt, Payment, SimpleDebt
 
 bot = botogram.create(config.api_key)
 db.connect()
-db.create_tables([User, Item, Order, Debt, Payment])
+db.create_tables([User, Item, Order, Debt, Payment, SimpleDebt])
 
 state = {}
 cache = {}
