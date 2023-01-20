@@ -109,10 +109,12 @@ def deliver_callback(query, data, chat, message):
 def item_command(chat, message, args):
     chat.send(config.enter_item_name_message)
     state[chat.id] = enter_item_name
+    print(state)
 
 
 @bot.message_matches(r".*")
 def input_matcher(chat, message):
+    print(state)
     if chat.id in state:
         return state[chat.id](chat, message)
     else:
