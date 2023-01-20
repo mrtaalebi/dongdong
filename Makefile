@@ -3,12 +3,12 @@ TAG ?= latest
 IMAGE := ${PROJECT}:${TAG}
 
 deps:
-	pip install -U poetry
+	pip install --upgrade pip poetry
 	poetry config virtualenvs.in-project true
 	poetry install
 
 prod-deps:
-	pip install -U poetry
+	pip install --upgrade pip poetry
 	poetry config virtualenvs.create false
 	poetry install --no-dev --no-interaction --no-ansi
 
