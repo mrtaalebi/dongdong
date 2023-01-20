@@ -14,23 +14,26 @@ bot = botogram.create(config.api_key)
 db.connect()
 db.create_tables([User, Item, Order, Debt, Payment, SimpleDebt])
 
-state = {}
-cache = {}
+
+@bot.prepare_memory
+def prepare_memory(shared):
+    shared["state"] = {}
+    shared["cache"] = {}
 
 
 @bot.command("start")
-def start_command(chat, message, args):
+def start_command(shared, chat, message, args):
     User.create(user_id=chat.id, name=chat.name, username=chat.username)
     chat.send(config.start_message)
 
 
 @bot.command("help")
-def help_command(chat, message, args):
+def help_command(shared, chat, message, args):
     chat.send(config.help_message)
 
 
 @bot.command("menu")
-def menu_command(chat, message, args):
+def menu_command(shared, chat, message, args):
     menu = botogram.Buttons()
     for i, item in enumerate(Item.select()):
         menu[int(i / 2)].callback(item.name, 'order', item.name)
@@ -38,7 +41,7 @@ def menu_command(chat, message, args):
 
 
 @bot.callback("order")
-def order_callback(query, data, chat, message):
+def order_callback(shared, query, data, chat, message):
     cache[chat.id] = data
     menu = botogram.Buttons()
     menu[0].callback(order_is_correct, 'order_is_correct', item.name)
@@ -47,7 +50,7 @@ def order_callback(query, data, chat, message):
 
 
 @bot.callback("order_is_correct")
-def order_is_correct_callback(query, data, chat, message):
+def order_is_correct_callback(shared, query, data, chat, message):
     item = Item.get(name=cache(chat.id))
     user = User.get(user_id=chat.id)
     Order.create(user=user, item=item)
@@ -55,13 +58,13 @@ def order_is_correct_callback(query, data, chat, message):
 
 
 @bot.callback("order_is_incorrect")
-def order_is_incorrect_callback(query, data, chat, message):
+def order_is_incorrect_callback(shared, query, data, chat, message):
     cache.drop(chat.id)
     chat.send(config.order_canceled_message)
 
 
 @bot.command("settle")
-def settle(chat, message, args):
+def settle(shared, chat, message, args):
     """
     uses min flow algorithm to minimize number of payments made
     """
@@ -96,7 +99,7 @@ def settle(chat, message, args):
 
 
 @bot.callback("deliver")
-def deliver_callback(query, data, chat, message):
+def deliver_callback(shared, query, data, chat, message):
     simple_debt = SimpleDebt.get(id=data)
     creditor = User.get(user_id == simple_debt.creditor.user_id)
     chat.send(f'{creditor.name} \n {simple_debt.amount}')
@@ -106,28 +109,26 @@ def deliver_callback(query, data, chat, message):
 
 
 @bot.command("item")
-def item_command(chat, message, args):
+def item_command(shared, chat, message, args):
     chat.send(config.enter_item_name_message)
-    state[chat.id] = enter_item_name
-    print(state)
+    shared["state"][chat.id] = enter_item_name
 
 
 @bot.message_matches(r".*")
-def input_matcher(chat, message):
-    print(state)
-    if chat.id in state:
-        return state[chat.id](chat, message)
+def input_matcher(shared, chat, message):
+    if chat.id in shared["state"]:
+        return shared["state"][chat.id](shared, chat, message)
     else:
         return message_not_matched(chat, message)
 
 
-def enter_item_name(chat, message):
+def enter_item_name(shared, chat, message):
     cache[chat.id] = message
     chat.send(config.enter_item_price_message)
-    state[chat.id] = enter_item_price
+    shared["state"][chat.id] = enter_item_price
 
 
-def enter_item_price(chat, message, args):
+def enter_item_price(shared, chat, message):
     name = cache[chat.id]
     try:
         Item.create(name=name, price=float(message))
@@ -135,7 +136,7 @@ def enter_item_price(chat, message, args):
     except peewee.IntegrityError as e:
         Item.select().where(name=name).update(price=float(message))
         chat.send(item_updated_message)
-    state.pop(chat.id)
+    shared["state"].pop(chat.id)
 
 
 def message_not_matched(chat, message):
