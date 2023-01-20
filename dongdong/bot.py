@@ -150,11 +150,13 @@ def settle(shared, chat, message, args):
         for i in amount:
             amount[p] += debts[i][p] - debts[p][i]
 
+    chat.send(str(amount))
     simple_debts = []
     while True:
         sorted_keys = sorted(amount, key=lambda i: amount[i])
         try:
             max_credit, max_debit = sorted_keys[-1], sorted_keys[0]
+            chat.send(str(max_credit, max_debit))
         except Exception as e:
             break
         if amount[max_credit] == 0 and amount[max_debit] == 0:
@@ -163,6 +165,7 @@ def settle(shared, chat, message, args):
         amount[max_credit] -= deliver
         amount[max_debit] += deliver
         simple_debts.append({'debitor': max_debit, 'creditor': max_credit, 'amount': deliver})
+        chat.send(str(simple_debts))
     with db.atomic():
         SimpleDebt.delete().execute()
     SimpleDebt.insert_many(simple_debts).execute()
