@@ -53,17 +53,13 @@ def order_callback(shared, query, data, chat, message):
         shared["cache"] = cache
     item = Item.get(Item.id == int(data))
     menu = botogram.Buttons()
-    menu[0].callback(config.order_is_correct_message, 'order_is_correct', str(item.id))
-    menu[0].callback(config.order_is_incorrect_message, 'order_is_incorrect', str(item.id))
+    menu[0].callback(config.yes_message, 'order_is_correct', str(item.id))
+    menu[0].callback(config.no_message, 'order_is_incorrect', str(item.id))
     chat.send(config.order_message.format(item.name), attach=menu)
 
 
 @bot.callback("order_is_correct")
 def order_is_correct_callback(shared, query, data, chat, message):
-    with shared.lock("cache"):
-        cache = shared["cache"]
-        cache.pop(chat.id)
-        shared["cache"] = cache
     item = Item.get(Item.id == int(data))
     user = User.get(User.user_id == chat.id)
     Order.create(user=user, item=item)
@@ -72,10 +68,6 @@ def order_is_correct_callback(shared, query, data, chat, message):
 
 @bot.callback("order_is_incorrect")
 def order_is_incorrect_callback(shared, query, data, chat, message):
-    with shared.lock("cache"):
-        cache = shared["cache"]
-        cache.pop(chat.id)
-        shared["cache"] = cache
     chat.send(config.order_canceled_message)
 
 
@@ -94,7 +86,7 @@ def orders(shared, chat, message, args):
         ):
         message.append(f'{i + 1} - {order.item.name} - {order.ordered_at.time()}')
         menu[int(i / 3)].callback(config.order_remove_message.format(i + 1), 'remove_order', str(order.id))
-    chat.send('اینا بود' + '\n'.join(message), attach=menu)
+    chat.send(config.orders_message + '\n' + '\n'.join(message), attach=menu)
 
 
 @bot.callback("remove_order")
@@ -110,6 +102,22 @@ def pay(shared, chat, message, args):
         start -= timedelta(days=1)
     start = datetime.combine(start.date(), start.min.time()) + timedelta(hours=3)
     end = start + timedelta(days=1)
+    debts, total = [], 0
+    for order in Order.select().where(Order.ordered_at > start and Order.ordered_at < end and Order.debt is None):
+        total += order.item.price
+    menu = botogram.Buttons()
+    menu[0].callback(config.yes_message, 'pay_confirm', '-')
+    menu[0].callback(config.no_message, 'pay_cancel', '-')
+    chat.send(config.pay_message.format(total))
+
+
+@bot.callback("pay_confirm")
+def pay_confirm_callback(shared, query, data, chat, message):
+    start = config.time_now()
+    if start.hour < 3:
+        start -= timedelta(days=1)
+    start = datetime.combine(start.date(), start.min.time()) + timedelta(hours=3)
+    end = start + timedelta(days=1)
     creditor = User.get(user_id=chat.id)
     payment = Payment(creditor=creditor)
     debts, total = [], 0
@@ -117,7 +125,12 @@ def pay(shared, chat, message, args):
         debts.append({'debitor': order.user, 'order': order, 'payment': payment})
         total += order.item.price
     Debt.insert_many(debts).execute()
-    chat.send(config.pay_message.format(total))
+    chat.send(config.pay_confirm_message.format(total))
+
+
+@bot.callback("pay_cancel")
+def pay_cancel_callback(shared, query, data, chat, message):
+    chat.send(config.pay_cancel_message)
 
 
 @bot.command("settle")
