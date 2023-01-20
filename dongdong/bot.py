@@ -58,7 +58,7 @@ def order_callback(shared, query, data, chat, message):
 def order_is_correct_callback(shared, query, data, chat, message):
     with shared.lock("cache"):
         cache = shared["cache"]
-        cache.drop(chat.id)
+        cache.pop(chat.id)
         shared["cache"] = cache
     item = Item.get(id=int(data))
     user = User.get(user_id=chat.id)
@@ -70,7 +70,7 @@ def order_is_correct_callback(shared, query, data, chat, message):
 def order_is_incorrect_callback(shared, query, data, chat, message):
     with shared.lock("cache"):
         cache = shared["cache"]
-        cache.drop(chat.id)
+        cache.pop(chat.id)
         shared["cache"] = cache
     chat.send(config.order_canceled_message)
 
