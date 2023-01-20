@@ -94,7 +94,7 @@ def orders(shared, chat, message, args):
         ):
         message.append(f'{i} - {order.item.name} - {order.ordered_at.time()}')
         menu[int(i / 3)].callback(config.order_remove_message.format(i), 'remove_order', str(order.id))
-    chat.send('\n'.join(message), attach=menu)
+    chat.send('اینا بود' + '\n'.join(message), attach=menu)
 
 
 @bot.callback("remove_order")
@@ -168,7 +168,7 @@ def deliver_callback(shared, query, data, chat, message):
     chat.send(f'{creditor.name} \n {simple_debt.amount}')
 
 
-@bot.command("put_item")
+@bot.command("putitem")
 def item_command(shared, chat, message, args):
     with shared.lock("state"):
         state = shared["state"]
@@ -177,7 +177,7 @@ def item_command(shared, chat, message, args):
     chat.send(config.enter_item_name_message)
 
 
-@bot.command("delete_item")
+@bot.command("deleteitem")
 def delete_item_command(shared, chat, message, args):
     message = []
     menu = botogram.Buttons()
