@@ -82,11 +82,8 @@ def orders(shared, chat, message, args):
     start = datetime.combine(start.date(), start.min.time()) + timedelta(hours=3)
     end = start + timedelta(days=1)
     for i, order in enumerate(Order.select().where(
-        Order.user.id == user.id and Order.ordered_at > start and Order.ordered_at < end)
+        Order.user.id == user.id & Order.ordered_at > start & Order.ordered_at < end)
         ):
-        chat.send(str(order.user_id))
-        chat.send(str(order.user.id))
-        chat.send(str(user.id))
         message.append(f'{i + 1} - {order.item.name} - {order.ordered_at.time()}')
         menu[int(i / 3)].callback(config.order_remove_message.format(i + 1), 'remove_order', str(order.id))
     chat.send(config.orders_message + '\n' + '\n'.join(message), attach=menu)
@@ -106,7 +103,7 @@ def pay(shared, chat, message, args):
     start = datetime.combine(start.date(), start.min.time()) + timedelta(hours=3)
     end = start + timedelta(days=1)
     debts, total = [], 0
-    for order in Order.select().where(Order.ordered_at > start and Order.ordered_at < end):
+    for order in Order.select().where(Order.ordered_at > start & Order.ordered_at < end):
         if order.debt:
             continue
         total += order.item.price
@@ -126,7 +123,7 @@ def pay_confirm_callback(shared, query, data, chat, message):
     creditor = User.get(user_id=chat.id)
     payment = Payment.create(creditor=creditor)
     debts, total = [], 0
-    for order in Order.select().where(Order.ordered_at > start and Order.ordered_at < end):
+    for order in Order.select().where(Order.ordered_at > start & Order.ordered_at < end):
         if order.debt:
             continue
         debts.append({'debitor': order.user, 'order': order, 'payment': payment})
