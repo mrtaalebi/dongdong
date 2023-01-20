@@ -112,7 +112,7 @@ def deliver_callback(shared, query, data, chat, message):
 def item_command(shared, chat, message, args):
     with shared.lock("state"):
         state = shared["state"]
-        state[chat.id] = 3
+        state[chat.id] = enter_item_name
         shared["state"] = state
     chat.send(config.enter_item_name_message)
 
