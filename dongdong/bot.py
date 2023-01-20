@@ -173,7 +173,7 @@ def settle(shared, chat, message, args):
         if sd.debitor.id != user.id:
             continue
         menu[i].callback(f'{sd.creditor.name}', 'deliver', str(sd.id))
-    message = config.settle_message '\n' + '\n'.join([f'‫{sd.debitor.name} pays {sd.creditor.name} - {sd.amount}' for sd in SimpleDebt.select()])
+    message = config.settle_message + '\n' + '\n'.join([f'‫{sd.debitor.name} pays {sd.creditor.name} - {sd.amount}' for sd in SimpleDebt.select()])
     chat.send(message, attach=menu)
 
 
