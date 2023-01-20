@@ -155,9 +155,7 @@ def settle(shared, chat, message, args):
         sorted_keys = sorted(amount.keys(), key=lambda i: amount[i])
         try:
             max_credit, max_debit = sorted_keys[-1], sorted_keys[0]
-            chat.send(str(max_credit, max_debit))
         except Exception as e:
-            chat.send(str(e))
             break
         if amount[max_credit] == 0 and amount[max_debit] == 0:
             break
