@@ -7,7 +7,7 @@ import botogram
 import sqlite3
 
 import config
-from dongdong.models import db, User, Item, Order, Debt, Payment
+from models import db, User, Item, Order, Debt, Payment
 
 
 bot = botogram.create(config.api_key)
