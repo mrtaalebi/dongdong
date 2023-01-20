@@ -1,0 +1,38 @@
+version: '3.7'
+
+services:
+  bot:
+    image: python:alpine
+    container_name: boalo_bot
+    build: .
+    environment:
+      - BOT_API_KEY=
+      - ENGINE_URI=
+        #postgresql://wowuser:wowpass@localhost:5010/wowdb
+      - TELEGRAM_ADMIN_ID=
+      - MIN_DEBT=5
+      - DAYS_TO_PAY=7
+    volumes:
+      - ./config/ocserv:/etc/ocserv
+    depends_on:
+      - db
+  ocserv:
+    image: vimagick/ocserv
+    container_name: boalo_ocserv
+    ports:
+      - "4443:443/tcp"
+      - "4443:443/udp"
+    volumes:
+      - ./config/ocserv:/etc/ocserv
+      - /etc/letsencrypt:/etc/letsencrypt
+    restart: always
+  db:
+    image: postgres:alpine
+    container_name: boalo_db
+    restart: always
+    environment:
+      - POSTGRES_DB=wowdb
+      - POSTGRES_USER=wowuser
+      - POSTGRES_PASSWORD=wowpass
+    volumes:
+      - ./pgdata/:/var/lib/postgresql/data/
