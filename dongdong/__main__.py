@@ -1,3 +1,3 @@
-import dongdong.bot
+import bot
 
-dongdong.bot.bot.run()
+bot.bot.run()
