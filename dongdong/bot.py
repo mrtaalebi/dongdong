@@ -34,7 +34,7 @@ def menu_command(chat, message, args):
     menu = botogram.Buttons()
     for i, item in enumerate(Item.select()):
         menu[int(i / 2)].callback(item.name, 'order', item.name)
-    chat.send(config.menu_message, attach=menu())
+    chat.send(config.menu_message, attach=menu)
 
 
 @bot.callback("order")
@@ -43,7 +43,7 @@ def order_callback(query, data, chat, message):
     menu = botogram.Buttons()
     menu[0].callback(order_is_correct, 'order_is_correct', item.name)
     menu[0].callback(order_is_incorrect, 'order_is_incorrect', item.name)
-    chat.send(config.order_message, attach=menu())
+    chat.send(config.order_message, attach=menu)
 
 
 @bot.callback("order_is_correct")
@@ -92,7 +92,7 @@ def settle(chat, message, args):
     for i, sd in enumerate(SimpleDebt.select().where(SimpleDebt.debitor == user)):
         menu[i].callback(f'{sd.creditor.name}', 'deliver', sd.id)
     message = '\n'.join([f'{sd.debitor.name} pays {sd.creditor.name}, {sd.amount}' for sd in SimpleDebt.select()])
-    chat.send(message, attach=menu())
+    chat.send(message, attach=menu)
 
 
 @bot.callback("deliver")
