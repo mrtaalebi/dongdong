@@ -21,4 +21,4 @@ menu_message = 'چی میل داری؟'
 order_message = '{} درسته؟'
 order_confirmed_message = 'ناب'
 order_canceled_message = 'ردیفه ثبت نشد.'
-
+settle_message = 'اینجوریاس:'
