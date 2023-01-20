@@ -6,15 +6,15 @@ import config
 
 
 if config.conn.startswith("postgres"):
-    db = PostgresqlDatabase(config.conn)
+    db = PostgresqlDatabase(config.conn, autorollback=True)
 else:
-    db = SqliteDatabase(config.conn)
+    db = SqliteDatabase(config.conn, autorollback=True)
 
 
 class User(Model):
     user_id = CharField()
     name = CharField()
-    username = CharField()
+    username = CharField(null=True)
     card_number = CharField(null=True)
 
     class Meta:
