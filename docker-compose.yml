@@ -3,7 +3,7 @@ version: '3'
 
 services:
   bot:
-    image: python:alpine
+    image: dongdong:latest
     restart: always
     environment:
       - api_key=
