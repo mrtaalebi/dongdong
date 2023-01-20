@@ -99,7 +99,7 @@ def orders(shared, chat, message, args):
 
 @bot.callback("remove_order")
 def remove_order_callback(shared, query, data, chat, message):
-    Order.delete().where(id=int(data))
+    Order.delete().where(Order.id=int(data))
     chat.send(config.order_remove_confirmation)
 
 
@@ -189,7 +189,7 @@ def delete_item_command(shared, chat, message, args):
 
 @bot.callback("delete_item_callback")
 def delete_item_callback(shared, query, data, chat, message):
-    Item.delete().where(id=int(data))
+    Item.delete().where(Item.id=int(data))
     chat.send(config.delete_item_confirm_message)
 
 
