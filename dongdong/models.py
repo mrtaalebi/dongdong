@@ -6,7 +6,7 @@ import config
 
 
 if config.conn.startswith("postgres"):
-    db = PooledPostgresqlDatabase(config.conn)
+    db = PostgresqlDatabase(config.conn)
 else:
     db = SqliteDatabase(config.conn)
 
