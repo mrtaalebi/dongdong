@@ -51,7 +51,7 @@ def order_callback(shared, query, data, chat, message):
         cache = shared["cache"]
         cache[chat.id] = data
         shared["cache"] = cache
-    item = Item.get(id=int(data))
+    item = Item.get(Item.id == int(data))
     menu = botogram.Buttons()
     menu[0].callback(config.order_is_correct_message, 'order_is_correct', str(item.id))
     menu[0].callback(config.order_is_incorrect_message, 'order_is_incorrect', str(item.id))
@@ -64,8 +64,8 @@ def order_is_correct_callback(shared, query, data, chat, message):
         cache = shared["cache"]
         cache.pop(chat.id)
         shared["cache"] = cache
-    item = Item.get(id=int(data))
-    user = User.get(user_id=chat.id)
+    item = Item.get(Item.id == int(data))
+    user = User.get(User.user_id == chat.id)
     Order.create(user=user, item=item)
     chat.send(config.order_confirmed_message)
 
@@ -83,7 +83,7 @@ def order_is_incorrect_callback(shared, query, data, chat, message):
 def orders(shared, chat, message, args):
     message = []
     menu = botogram.Buttons()
-    user = User.get(user_id=chat.id)
+    user = User.get(User.user_id == chat.id)
     start = config.time_now()
     if start.hour < 3:
         start -= timedelta(days=1)
@@ -99,7 +99,7 @@ def orders(shared, chat, message, args):
 
 @bot.callback("remove_order")
 def remove_order_callback(shared, query, data, chat, message):
-    Order.delete().where(Order.id=int(data))
+    Order.delete().where(Order.id == int(data))
     chat.send(config.order_remove_confirmation)
 
 
@@ -150,7 +150,7 @@ def settle(shared, chat, message, args):
         SimpleDebt.delete()
     SimpleDebt.insert_many(simple_debts).execute()
 
-    user = User.get(user_id=chat.id)
+    user = User.get(User.user_id == chat.id)
     menu = botogram.Buttons()
     for i, sd in enumerate(SimpleDebt.select().where(SimpleDebt.debitor == user)):
         menu[i].callback(f'{sd.creditor.name}', 'deliver', str(sd.id))
@@ -160,7 +160,7 @@ def settle(shared, chat, message, args):
 
 @bot.callback("deliver")
 def deliver_callback(shared, query, data, chat, message):
-    simple_debt = SimpleDebt.get(id=int(data))
+    simple_debt = SimpleDebt.get(SimpleDebt.id == int(data))
     creditor = User.get(user_id == simple_debt.creditor.user_id)
     if creditor.card_number:
         chat.send(creditor.card_number)
@@ -189,7 +189,7 @@ def delete_item_command(shared, chat, message, args):
 
 @bot.callback("delete_item_callback")
 def delete_item_callback(shared, query, data, chat, message):
-    Item.delete().where(Item.id=int(data))
+    Item.delete().where(Item.id == int(data))
     chat.send(config.delete_item_confirm_message)
 
 
