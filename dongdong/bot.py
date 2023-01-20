@@ -102,21 +102,21 @@ def settle(shared, chat, message, args):
 def deliver_callback(shared, query, data, chat, message):
     simple_debt = SimpleDebt.get(id=data)
     creditor = User.get(user_id == simple_debt.creditor.user_id)
-    chat.send(f'{creditor.name} \n {simple_debt.amount}')
     if creditor.card_number:
         chat.send(creditor.card_number)
     simple_debt.delete()
+    chat.send(f'{creditor.name} \n {simple_debt.amount}')
 
 
 @bot.command("item")
 def item_command(shared, chat, message, args):
-    chat.send(config.enter_item_name_message)
     shared["state"][chat.id] = enter_item_name
+    chat.send(config.enter_item_name_message)
 
 
 @bot.message_matches(r".*")
 def input_matcher(shared, chat, message):
-    chat.send(shared["state"])
+    chat.send(str(shared["state"]))
     if chat.id in shared["state"]:
         return shared["state"][chat.id](shared, chat, message)
     else:
@@ -125,19 +125,19 @@ def input_matcher(shared, chat, message):
 
 def enter_item_name(shared, chat, message):
     cache[chat.id] = message
-    chat.send(config.enter_item_price_message)
     shared["state"][chat.id] = enter_item_price
+    chat.send(config.enter_item_price_message)
 
 
 def enter_item_price(shared, chat, message):
     name = cache[chat.id]
+    shared["state"].pop(chat.id)
     try:
         Item.create(name=name, price=float(message))
         chat.send(item_created_message)
     except peewee.IntegrityError as e:
         Item.select().where(name=name).update(price=float(message))
         chat.send(item_updated_message)
-    shared["state"].pop(chat.id)
 
 
 def message_not_matched(chat, message):
