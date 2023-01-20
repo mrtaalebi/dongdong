@@ -115,7 +115,7 @@ def settle(shared, chat, message, args):
         try:
             max_credit, max_debit = sorted_keys[-1], sorted_keys[0]
         except Exception as e:
-            max_credit = max_debit = 0
+            break
         if amount[max_credit] == 0 and amount[max_debit] == 0:
             break
         deliver = min(-1 * amount[max_debit], amount[max_credit])
