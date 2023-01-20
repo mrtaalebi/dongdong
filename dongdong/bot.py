@@ -66,15 +66,9 @@ def settle(chat, message, args):
     """
     uses min flow algorithm to minimize number of payments made
     """
-    debts = [
-        [
-            sum([
-                debt.order.item.price for debt in
-                Debt.select().where(debitor == user and payment.creditor == creditor)])
-                for creditor in User.select()
-        ]
-        for debitor in User.select()
-    ]
+    debts = {user_1: {user_2: 0 for user_2 in User.select()} for user_1 in User.select()}
+    for debt in Debt.select():
+        debts[debt.debitor][debt.payment.creditor] += debt.order.item.price
     amount = {user: 0 for user in User.select()}
     for p, _ in amount:
         for i, __ in amount:
