@@ -114,12 +114,12 @@ def item_command(chat, message, args):
 @bot.message_matches(r".*")
 def input_matcher(chat, message):
     if chat.id in state:
-        return state[chat.id](chat, message, args)
+        return state[chat.id](chat, message)
     else:
-        return message_not_matched(chat, message, args)
+        return message_not_matched(chat, message)
 
 
-def enter_item_name(chat, message, args):
+def enter_item_name(chat, message):
     cache[chat.id] = message
     chat.send(config.enter_item_price_message)
     state[chat.id] = enter_item_price
@@ -136,6 +136,5 @@ def enter_item_price(chat, message, args):
     state.pop(chat.id)
 
 
-def message_not_matched(chat, message, args):
+def message_not_matched(chat, message):
     chat.send(config.message_not_matched_message)
-
