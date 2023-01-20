@@ -85,7 +85,7 @@ def settle(chat, message, args):
         amount[max_debit] += deliver
         simple_debts.append({'debitor': max_debit, 'creditor': max_credit, 'amount': deliver})
     with db.atomic():
-        SimpleDebts.delete()
+        SimpleDebt.delete()
     SimpleDebt.insert_many(**simple_debts).execute()
 
     user = User.get(user_id=chat.id)
