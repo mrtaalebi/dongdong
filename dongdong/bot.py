@@ -150,11 +150,10 @@ def settle(shared, chat, message, args):
         for i in amount:
             amount[p] += debts[i][p] - debts[p][i]
 
-    chat.send(str(debts))
-    chat.send(str(amount))
     simple_debts = []
     while True:
         sorted_keys = sorted(amount, key=lambda i: amount[i])
+        chat.send(str(orted_keys))
         try:
             max_credit, max_debit = sorted_keys[-1], sorted_keys[0]
             chat.send(str(max_credit, max_debit))
