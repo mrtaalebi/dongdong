@@ -49,8 +49,8 @@ def order_callback(shared, query, data, chat, message):
         shared["cache"] = cache
     item = Item.get(id=int(data))
     menu = botogram.Buttons()
-    menu[0].callback(config.order_is_correct, 'order_is_correct', str(item.id))
-    menu[0].callback(config.order_is_incorrect, 'order_is_incorrect', str(item.id))
+    menu[0].callback(config.order_is_correct_message, 'order_is_correct', str(item.id))
+    menu[0].callback(config.order_is_incorrect_message, 'order_is_incorrect', str(item.id))
     chat.send(config.order_message.format(item.name), attach=menu)
 
 
