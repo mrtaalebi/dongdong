@@ -111,6 +111,7 @@ def deliver_callback(shared, query, data, chat, message):
 @bot.command("item")
 def item_command(shared, chat, message, args):
     shared["state"][chat.id] = enter_item_name
+    shared["state"][2]= 5
     chat.send(config.enter_item_name_message)
 
 
