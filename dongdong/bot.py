@@ -82,7 +82,7 @@ def orders(shared, chat, message, args):
     start = datetime.combine(start.date(), start.min.time()) + timedelta(hours=3)
     end = start + timedelta(days=1)
     for i, order in enumerate(Order.select().where(
-        Order.user == user and Order.ordered_at > start and Order.ordered_at < end)
+        Order.user.id == user.id and Order.ordered_at > start and Order.ordered_at < end)
         ):
         message.append(f'{i + 1} - {order.item.name} - {order.ordered_at.time()}')
         menu[int(i / 3)].callback(config.order_remove_message.format(i + 1), 'remove_order', str(order.id))
@@ -173,7 +173,7 @@ def settle(shared, chat, message, args):
 
     user = User.get(User.user_id == chat.id)
     menu = botogram.Buttons()
-    for i, sd in enumerate(SimpleDebt.select().where(SimpleDebt.debitor == user)):
+    for i, sd in enumerate(SimpleDebt.select().where(SimpleDebt.debitor.id == user.id)):
         menu[i].callback(f'{sd.creditor.name}', 'deliver', str(sd.id))
     message = config.settle_message + '\n'.join([f'{sd.debitor.name} pays {sd.creditor.name}, {sd.amount}' for sd in SimpleDebt.select()])
     chat.send(message, attach=menu)
