@@ -91,7 +91,7 @@ def orders(shared, chat, message, args):
 
 @bot.callback("remove_order")
 def remove_order_callback(shared, query, data, chat, message):
-    Order.delete().where(Order.id == int(data))
+    Order.delete().where(Order.id == int(data)).execute()
     chat.send(config.order_remove_confirmation)
 
 
@@ -160,7 +160,7 @@ def settle(shared, chat, message, args):
         amount[max_debit] += deliver
         simple_debts.append({'debitor': max_debit, 'creditor': max_credit, 'amount': deliver})
     with db.atomic():
-        SimpleDebt.delete()
+        SimpleDebt.delete().execute()
     SimpleDebt.insert_many(simple_debts).execute()
 
     user = User.get(User.user_id == chat.id)
@@ -177,7 +177,7 @@ def deliver_callback(shared, query, data, chat, message):
     creditor = User.get(user_id == simple_debt.creditor.user_id)
     if creditor.card_number:
         chat.send(creditor.card_number)
-    simple_debt.delete()
+    simple_debt.delete_instance()
     chat.send(f'{creditor.name} \n {simple_debt.amount}')
 
 
@@ -202,7 +202,7 @@ def delete_item_command(shared, chat, message, args):
 
 @bot.callback("delete_item_callback")
 def delete_item_callback(shared, query, data, chat, message):
-    Item.delete().where(Item.id == int(data))
+    Item.delete().where(Item.id == int(data)).execute()
     chat.send(config.delete_item_confirm_message)
 
 
