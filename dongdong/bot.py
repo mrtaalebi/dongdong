@@ -163,7 +163,6 @@ def settle(shared, chat, message, args):
         amount[max_credit] -= deliver
         amount[max_debit] += deliver
         simple_debts.append({'debitor': max_debit, 'creditor': max_credit, 'amount': deliver})
-        chat.send(str(simple_debts))
     with db.atomic():
         SimpleDebt.delete().execute()
     SimpleDebt.insert_many(simple_debts).execute()
