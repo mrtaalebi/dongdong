@@ -92,8 +92,8 @@ def orders(shared, chat, message, args):
     for i, order in enumerate(Order.select().where(
         Order.user == user and Order.ordered_at > start and Order.ordered_at < end)
         ):
-        message.append(f'{i} - {order.item.name} - {order.ordered_at.time()}')
-        menu[int(i / 3)].callback(config.order_remove_message.format(i), 'remove_order', str(order.id))
+        message.append(f'{i + 1} - {order.item.name} - {order.ordered_at.time()}')
+        menu[int(i / 3)].callback(config.order_remove_message.format(i + 1), 'remove_order', str(order.id))
     chat.send('اینا بود' + '\n'.join(message), attach=menu)
 
 
@@ -182,8 +182,8 @@ def delete_item_command(shared, chat, message, args):
     message = []
     menu = botogram.Buttons()
     for i, item in enumerate(Item.select()):
-        message.append(f'{i} - {item.name} - {item.price}')
-        menu[int(i % 3)].callback(config.delete_item_message.format(i), 'delete_item_callback', str(item.id))
+        message.append(f'{i + 1} - {item.name} - {item.price}')
+        menu[int(i / 3)].callback(config.delete_item_message.format(i + 1), 'delete_item_callback', str(item.id))
     chat.send('\n'.join(message), attach=menu)
     
 
