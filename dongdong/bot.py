@@ -72,7 +72,7 @@ def settle(chat, message, args):
     amount = {user: 0 for user in User.select()}
     for p, _ in amount:
         for i, __ in amount:
-            amount[p][0] += debts[i][p] - debts[p][i]
+            amount[p] += debts[i][p] - debts[p][i]
 
     simple_debts = {}
     while True:
