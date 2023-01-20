@@ -189,7 +189,7 @@ def delete_item_command(shared, chat, message, args):
 
 @bot.callback("delete_item_callback")
 def delete_item_callback(shared, query, data, chat, message):
-    Item.delete(id=int(data))
+    Item.delete().where(id=int(data))
     chat.send(config.delete_item_confirm_message)
 
 
