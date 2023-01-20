@@ -11,7 +11,7 @@ api_key = env.get("api_key")
 time_now = lambda: datetime.now(timezone(tz))
 
 start_message = 'سلام خوش اومدی. از منو هلپ رو انتخاب کن.'
-help_message = ''
+help_message = 'هرچی سفارش می‌دی با order اضافه کن. اگه خواستی چیزی به منو اضافه کنی یا تغییر بدی از item استفاده کن. اگرم یه روزی پرداخت کردی payment رو بزن. نهایتا وقتی که یه نفر تو کل گروه settle رو بزنه تو بات، بدهی‌ها ساده می‌شه و ذخیره می‌شه. ازونجا می‌تونی انتخاب کنی که بدهیت به کی رو پرداخت کنی.'
 enter_item_name_message = 'می‌تونی یه چیز اضافه کنی یا قیمت یه چیزی رو آپدیت کنی. اسمش رو بگو.'
 enter_item_price_message = 'چنده؟'
 item_created_message = 'أیتم اضافه شد.'
