@@ -70,8 +70,8 @@ def settle(chat, message, args):
     for debt in Debt.select():
         debts[debt.debitor][debt.payment.creditor] += debt.order.item.price
     amount = {user: 0 for user in User.select()}
-    for p, _ in amount:
-        for i, __ in amount:
+    for p in amount:
+        for i in amount:
             amount[p] += debts[i][p] - debts[p][i]
 
     simple_debts = {}
