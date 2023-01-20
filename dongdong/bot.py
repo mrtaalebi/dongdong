@@ -103,7 +103,7 @@ def pay(shared, chat, message, args):
     start = datetime.combine(start.date(), start.min.time()) + timedelta(hours=3)
     end = start + timedelta(days=1)
     debts, total = [], 0
-    for order in Order.select().where(Order.ordered_at > start and Order.ordered_at < end and not Order.debt):
+    for order in Order.select().where(Order.ordered_at > start and Order.ordered_at < end and Order.debt == None):
         total += order.item.price
     menu = botogram.Buttons()
     menu[0].callback(config.yes_message, 'pay_confirm', '-')
@@ -118,8 +118,6 @@ def pay_confirm_callback(shared, query, data, chat, message):
         start -= timedelta(days=1)
     start = datetime.combine(start.date(), start.min.time()) + timedelta(hours=3)
     end = start + timedelta(days=1)
-    chat.send(str(start))
-    chat.send(str(end))
     creditor = User.get(user_id=chat.id)
     payment = Payment(creditor=creditor)
     debts, total = [], 0
