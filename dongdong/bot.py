@@ -84,7 +84,7 @@ def orders(shared, chat, message, args):
     for i, order in enumerate(Order.select()):
         if not(order.user.id == user.id and order.ordered_at > start and order.ordered_at < end):
             continue
-        message.append(f'{i + 1} - {order.item.name} - {order.ordered_at.time()}')
+        message.append(f'{i + 1} - {order.item.name} - {order.ordered_at.time().strftime("%H:%M:%S")}')
         menu[int(i / 3)].callback(config.order_remove_message.format(i + 1), 'remove_order', str(order.id))
     chat.send(config.orders_message + '\n' + '\n'.join(message), attach=menu)
 
