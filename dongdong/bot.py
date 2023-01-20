@@ -73,7 +73,7 @@ def settle(chat, message, args):
         for i in amount:
             amount[p] += debts[i][p] - debts[p][i]
 
-    simple_debts = {}
+    simple_debts = []
     while True:
         sorted_keys = sorted(amount, key=lambda i: amount[i])
         max_credit, max_debit = sorted_keys[-1], sorted_keys[0]
@@ -85,7 +85,7 @@ def settle(chat, message, args):
         simple_debts.append({'debitor': max_debit, 'creditor': max_credit, 'amount': deliver})
     with db.atomic():
         SimpleDebt.delete()
-    SimpleDebt.insert_many(**simple_debts).execute()
+    SimpleDebt.insert_many(simple_debts).execute()
 
     user = User.get(user_id=chat.id)
     menu = botogram.Buttons()
