@@ -103,7 +103,7 @@ def pay(shared, chat, message, args):
     start = datetime.combine(start.date(), start.min.time()) + timedelta(hours=3)
     end = start + timedelta(days=1)
     debts, total = [], 0
-    for order in Order.select().where(Order.ordered_at > start and Order.ordered_at < end and Order.debt is None):
+    for order in Order.select().where(Order.ordered_at > start and Order.ordered_at < end and not Order.debt):
         total += order.item.price
     menu = botogram.Buttons()
     menu[0].callback(config.yes_message, 'pay_confirm', '-')
