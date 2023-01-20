@@ -108,7 +108,7 @@ def pay(shared, chat, message, args):
     menu = botogram.Buttons()
     menu[0].callback(config.yes_message, 'pay_confirm', '-')
     menu[0].callback(config.no_message, 'pay_cancel', '-')
-    chat.send(config.pay_message.format(total))
+    chat.send(config.pay_message.format(total), attach=menu)
 
 
 @bot.callback("pay_confirm")
